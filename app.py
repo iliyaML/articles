@@ -6,6 +6,8 @@ from passlib.hash import sha256_crypt
 from functools import wraps
 
 app = Flask(__name__)
+# Session
+app.secret_key = 'secret123'
 
 # MySQL Config
 app.config['MYSQL_HOST'] = 'us-cdbr-iron-east-05.cleardb.net'
@@ -283,6 +285,4 @@ def delete_article(id):
 
 
 if __name__ == "__main__":
-    # session
-    app.secret_key = 'secret123'
     app.run(debug=True)
