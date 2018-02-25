@@ -1,0 +1,10 @@
+{% extends 'layout.html' %} {% block body %}
+<h1>Articles</h1>
+<p class="lead">Use this document as a way to quickly start any new project.
+    <br> All you get is this text and a mostly barebones HTML document. <br>
+    {% if session.logged_in == NULL %}
+        <a href="/register" class="btn btn-primary btn-lg">Register</a>
+        <a href="/login" class="btn btn-success btn-lg">Log In</a>
+    {% endif %}
+</p>
+{% endblock %}
