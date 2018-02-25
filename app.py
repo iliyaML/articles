@@ -8,17 +8,17 @@ from functools import wraps
 app = Flask(__name__)
 
 # MySQL Config
-# app.config['MYSQL_HOST'] = 'us-cdbr-iron-east-05.cleardb.net'
-# app.config['MYSQL_USER'] = 'bd99eb6f7c65fe'
-# app.config['MYSQL_PASSWORD'] = '8607fe1d'
-# app.config['MYSQL_DB'] = 'heroku_c03b44751bd1b93'
-# app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
-
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'articlesdb'
+app.config['MYSQL_HOST'] = 'us-cdbr-iron-east-05.cleardb.net'
+app.config['MYSQL_USER'] = 'bd99eb6f7c65fe'
+app.config['MYSQL_PASSWORD'] = '8607fe1d'
+app.config['MYSQL_DB'] = 'heroku_c03b44751bd1b93'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+
+# app.config['MYSQL_HOST'] = 'localhost'
+# app.config['MYSQL_USER'] = 'root'
+# app.config['MYSQL_PASSWORD'] = ''
+# app.config['MYSQL_DB'] = 'articlesdb'
+# app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
 
@@ -26,7 +26,21 @@ mysql = MySQL(app)
 
 @app.route('/')
 def index():
-    return render_template('home.html')
+    # Create Cursor
+    cur = mysql.connection.cursor()
+
+    # Execute
+    result = cur.execute("SELECT * FROM articles ORDER BY create_date DESC")
+
+    articles = cur.fetchall()
+
+    if result > 0:
+        return render_template('articles.html', articles=articles)
+    else:
+        return render_template('articles.html')
+
+    # Close connection
+    cur.close()
 
 @app.route('/about')
 def about():
@@ -179,7 +193,7 @@ def dashboard():
 # Register Form Class
 class ArticleForm(Form):
     title = StringField('Title', [validators.Length(min=1, max=200)])
-    body = StringField('Body', [validators.Length(min=30)])
+    body = TextAreaField('Body', [validators.Length(min=1, max=1000)])
 
 # Add Article
 @app.route('/add_article', methods=['GET', 'POST'])
